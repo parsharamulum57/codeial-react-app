@@ -1,10 +1,28 @@
-import PropTypes from 'prop-types';
-
+import { useEffect, useState } from 'react';
+import { getPost } from '../api';
 import { Post } from '../components';
+import { Loader } from '../components';
 
 export default function Home(props) {
-  const posts = props.posts;
-  console.log('posts ', posts);
+  let [posts, setPosts] = useState([]);
+  let [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      let response = await getPost();
+      console.log('response ', response);
+
+      if (response.success) {
+        setPosts(response.data.posts);
+        setLoading(false);
+      }
+    }
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <div>
@@ -14,7 +32,3 @@ export default function Home(props) {
     </div>
   );
 }
-
-Home.propTypes = {
-  posts: PropTypes.array.isRequired,
-};

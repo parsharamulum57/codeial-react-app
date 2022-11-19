@@ -1,33 +1,34 @@
-import { useEffect, useState } from 'react';
-import { getPost } from '../api';
-import { Home } from '../pages';
-import { Navbar,Loader } from './';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks';
+import { Home, Login, Settings, Signup } from '../pages';
+import { Navbar, Loader } from './';
 
+const giveComponent = (user, comp) => {
+  if (user) {
+    return comp;
+  }
+  return <Navigate to="/login"></Navigate>;
+};
 function App() {
-  let [posts, setPosts] = useState([]);
-  let [loading, setLoading] = useState(true);
+  const auth = useAuth();
+  console.log('in APP auth ', auth);
 
-  useEffect(() => {
-    async function fetchPosts() {
-      let response = await getPost();
-      console.log('response ', response);
-
-      if (response.success) {
-        setPosts(response.data.posts);
-        setLoading(false);
-      }
-    }
-    fetchPosts();
-  }, []);
-
-  if (loading) {
+  if (auth.loading) {
     return <Loader />;
   }
 
   return (
     <div className="App">
       <Navbar />
-      <Home posts={posts} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Signup />} />
+        <Route
+          path="/settings"
+          element={giveComponent(auth.user, <Settings />)}
+        />
+      </Routes>
     </div>
   );
 }
