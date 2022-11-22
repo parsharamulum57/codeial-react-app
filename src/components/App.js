@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks';
-import { Home, Login, Settings, Signup } from '../pages';
+import { Home, Login, Settings, Signup, UserProfile } from '../pages';
 import { Navbar, Loader } from './';
 
 const giveComponent = (user, comp) => {
@@ -27,6 +27,10 @@ function App() {
         <Route
           path="/settings"
           element={giveComponent(auth.user, <Settings />)}
+        />
+        <Route
+          path="/user/:userId"
+          element={giveComponent(auth.user, <UserProfile />)}
         />
       </Routes>
     </div>

@@ -1,34 +1,27 @@
-import { useEffect, useState } from 'react';
-import { getPost } from '../api';
-import { Post } from '../components';
+import { CreatePost, FriendsList, Post } from '../components';
 import { Loader } from '../components';
+import { useAuth, usePosts } from '../hooks';
+import styles from '../styles/home.module.css';
 
 export default function Home(props) {
-  let [posts, setPosts] = useState([]);
-  let [loading, setLoading] = useState(true);
+  const posts = usePosts();
+  const auth = useAuth();
 
-  useEffect(() => {
-    async function fetchPosts() {
-      let response = await getPost();
-      console.log('response ', response);
+  console.log('posts ', posts);
 
-      if (response.success) {
-        setPosts(response.data.posts);
-        setLoading(false);
-      }
-    }
-    fetchPosts();
-  }, []);
-
-  if (loading) {
+  if (posts.loading) {
     return <Loader />;
   }
 
   return (
-    <div>
-      {posts.map((post) => {
-        return <Post post={post} key={post._id} />;
-      })}
+    <div className={styles.home}>
+      <div className={styles.postsList}>
+        <CreatePost />
+        {posts.data.map((post) => {
+          return <Post post={post} key={post._id} />;
+        })}
+      </div>
+      {auth.user && <FriendsList />}
     </div>
   );
 }

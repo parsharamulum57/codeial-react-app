@@ -3,6 +3,7 @@ import styles from '../styles/login.module.css';
 import { useToasts } from 'react-toast-notifications';
 import { useAuth } from '../hooks';
 import { Navigate } from 'react-router-dom';
+import { fetchUserFriends } from '../api';
 
 const Login = () => {
   let [email, setEmail] = useState('');
@@ -10,7 +11,6 @@ const Login = () => {
   let [loggingIn, setLoggingIn] = useState(false);
   const { addToast } = useToasts();
   const auth = useAuth();
-  console.log(' auth ', auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +37,25 @@ const Login = () => {
     setLoggingIn(false);
   };
 
+  async function updateUser() {
+    let res = await fetchUserFriends();
+
+    console.log('fetching friends ', res.data, auth.user);
+    if (res.success) {
+      auth.updateUserInContext({
+        ...auth.user,
+        friendships: res.data.friends,
+      });
+    } else {
+      auth.updateUserInContext({
+        ...auth.user,
+        friendships: [],
+      });
+    }
+  }
+
   if (auth.user) {
+    updateUser();
     return <Navigate to="/" />;
   }
 

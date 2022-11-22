@@ -5,6 +5,7 @@ import { App } from './components';
 import { BrowserRouter } from 'react-router-dom';
 import { ToastProvider } from 'react-toast-notifications';
 import { AuthProvider } from './providers';
+import { PostsProvider } from './providers/PostProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,7 +17,9 @@ root.render(
         placement="top-right"
       >
         <AuthProvider>
-          <App />
+          <PostsProvider>
+            <App />
+          </PostsProvider>
         </AuthProvider>
       </ToastProvider>
     </BrowserRouter>
